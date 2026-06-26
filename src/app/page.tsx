@@ -1,7 +1,39 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Candidate = { handle: string; platform: string; followers: string; focus: string; matchScore: number; why: string; angle: string };
+
+const SCOUT_STEPS = [
+  "🔎 Scanning the niche for matching creators",
+  "📊 Scoring each on audience & product fit",
+  "🧮 Ranking and assembling your shortlist",
+];
+
+// Stepped loader — advances through the pipeline phases so the wait feels alive.
+function StepLoader({ steps }: { steps: string[] }) {
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    setI(0);
+    const t = setInterval(() => setI((x) => Math.min(x + 1, steps.length - 1)), 2400);
+    return () => clearInterval(t);
+  }, [steps]);
+  return (
+    <div className="panel mb-6 space-y-3 p-5">
+      {steps.map((s, idx) => (
+        <div key={s} className="flex items-center gap-3 text-sm transition-opacity" style={{ opacity: idx <= i ? 1 : 0.35 }}>
+          {idx < i ? (
+            <span className="text-[#7ee787]">✓</span>
+          ) : idx === i ? (
+            <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-[var(--color-accent)] border-t-transparent" />
+          ) : (
+            <span className="inline-block h-4 w-4 rounded-full border-2 border-[var(--color-line)]" />
+          )}
+          <span style={{ color: idx === i ? "var(--color-accent)" : undefined }}>{s}{idx === i ? "…" : ""}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
   const [product, setProduct] = useState("An AI tool that lets businesses build custom chatbots trained on their own data.");
@@ -54,6 +86,8 @@ export default function Home() {
         <button className="btn" onClick={scout} disabled={loading}>{loading ? "Scouting…" : "Find creators →"}</button>
         {err && <p className="text-sm text-red-400">{err}</p>}
       </div>
+
+      {loading && <StepLoader steps={SCOUT_STEPS} />}
 
       {rows.length > 0 && (
         <div className="mb-4 flex items-center justify-between">
