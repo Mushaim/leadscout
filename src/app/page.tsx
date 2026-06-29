@@ -73,7 +73,7 @@ export default function Home() {
     <main className="mx-auto max-w-3xl px-5 py-10">
       <div className="mb-6">
         <h1 className="text-3xl font-bold">LeadScout <span className="text-[var(--color-accent)]">⌖</span></h1>
-        <p className="mt-1 text-[var(--color-mute)]">Describe your product → the agent finds matching B2B creators, scores fit, and drafts outreach. <span className="chip">demo: candidates are AI-generated examples</span></p>
+        <p className="mt-1 text-[var(--color-mute)]">Describe your product → the agent finds matching B2B creators, scores fit, and drafts outreach. <span className="chip">candidates are AI-generated examples</span></p>
       </div>
 
       <div className="panel mb-6 space-y-3 p-5">
