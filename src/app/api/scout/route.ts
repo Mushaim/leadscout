@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { throttled, clientIp } from "@/lib/throttle";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
+  if (throttled(clientIp(req))) return NextResponse.json({ error: "Demo limit reached (10/hour). Try again later." }, { status: 429 });
   const { product, niche, platform, audience } = await req.json();
   if (!product) return NextResponse.json({ error: "Describe your product first." }, { status: 400 });
   if (!process.env.ANTHROPIC_API_KEY) return NextResponse.json({ error: "Server missing ANTHROPIC_API_KEY." }, { status: 503 });
 
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const res = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: "claude-haiku-4-5",
     max_tokens: 1800,
     tools: [{
       name: "candidates",
